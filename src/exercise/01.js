@@ -2,25 +2,15 @@
 // http://localhost:3000/isolated/exercise/01.js
 
 import * as React from 'react'
-import {fetchPokemon, PokemonDataView, PokemonErrorBoundary} from '../pokemon'
+import {fetchPokemon, PokemonDataView, PokemonErrorBoundary, PokemonInfoFallback} from '../pokemon'
+import { createResource } from 'utils'
 
-let pokemon
-let pokemonError
-const handleSuccess = result => pokemon = result
-const handleFailure = error => pokemonError = error
-const pokemonPromise = fetchPokemon('pikach').then(handleSuccess, handleFailure)
+const pokemonResource = createResource(fetchPokemon('pikachu'))
 
 function PokemonInfo() {
-  if (pokemonError) {
-    throw pokemonError
-  }
-
-  if (!pokemon) {
-    throw pokemonPromise
-  }
-
   // if the code gets it this far, then the pokemon variable is defined and
   // rendering can continue!
+  const pokemon = pokemonResource.read()
   return (
     <div>
       <div className="pokemon-info__img-wrapper">
@@ -36,7 +26,7 @@ function App() {
     <div className="pokemon-info-app">
       <div className="pokemon-info">
         <PokemonErrorBoundary>
-          <React.Suspense fallback={<div>loading...</div>}>
+          <React.Suspense fallback={<PokemonInfoFallback name='pickachu' />}>
             <PokemonInfo />
           </React.Suspense>
         </PokemonErrorBoundary>
