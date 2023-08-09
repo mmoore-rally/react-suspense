@@ -71,20 +71,26 @@ function App() {
           onReset={handleReset}
           resetKeys={[pokemonResource]}
         >
-          <React.Suspense fallback={fallback}>
-            <NavBar pokemonResource={pokemonResource} />
-          </React.Suspense>
-          <div className={cn.mainContentArea}>
-            <React.Suspense fallback={fallback}>
-              <LeftNav />
+          <React.SuspenseList revealOrder="forwards" tail="collapsed">
+            <React.Suspense fallback={fallback} id="1">
+              <NavBar pokemonResource={pokemonResource} />
             </React.Suspense>
-            <React.Suspense fallback={fallback}>
-              <MainContent pokemonResource={pokemonResource} />
+            <React.Suspense fallback={fallback} id="2">
+              <div className={cn.mainContentArea}>
+                <React.SuspenseList revealOrder="together" tail="collapsed">
+                  <React.Suspense fallback={fallback} id="1">
+                    <LeftNav />
+                  </React.Suspense>
+                  <React.Suspense fallback={fallback} id="3">
+                    <MainContent pokemonResource={pokemonResource} />
+                  </React.Suspense>
+                  <React.Suspense fallback={fallback} id="2">
+                    <RightNav pokemonResource={pokemonResource} />
+                  </React.Suspense>
+                </React.SuspenseList>
+              </div>
             </React.Suspense>
-            <React.Suspense fallback={fallback}>
-              <RightNav pokemonResource={pokemonResource} />
-            </React.Suspense>
-          </div>
+          </React.SuspenseList>
         </PokemonErrorBoundary>
       </div>
     </div>
